@@ -2,12 +2,14 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container">
-    <h2>Create Hall of Fame</h2>
+    <h2>Update Hall of Fame</h2>
     <form action="" method="post">
     {% csrf_token %}
     {{ form | crispy }}
-<button type="submit" class="btn btn-primary">Create Hall</button>
+<button type="submit" class="btn btn-primary">Update</button>
 
     </form>
+        <br>
+        <a href="{% url 'delete_hall' hall.id %}" class="btn btn-danger">Delete this Hall of Fame</a>
     </div>
 {% endblock %}
