@@ -11,7 +11,7 @@ import urllib
 from django.forms.utils import ErrorList
 import requests
 
-YOUTUBE_API_KEY = 'AIzaSyDlGDPW5nhKL07Y--Z3-zCi1asdP7XXcws'
+YOUTUBE_API_KEY = ''
 
 # Create your views here.
 
