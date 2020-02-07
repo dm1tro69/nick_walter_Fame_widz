@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, DeleteView, UpdateView
@@ -9,6 +9,7 @@ from .forms import VideoForm, SearchForm
 from django.forms import formset_factory
 import urllib
 from django.forms.utils import ErrorList
+import requests
 
 YOUTUBE_API_KEY = 'AIzaSyDlGDPW5nhKL07Y--Z3-zCi1asdP7XXcws'
 
@@ -33,26 +34,37 @@ def add_video(request, pk):
         raise Http404
 
     if request.method == 'POST':
-        filed_form = VideoForm(request.POST)
-        if filed_form.is_valid():
+        form = VideoForm(request.POST)
+        if form.is_valid():
             video = Video()
             video.hall = hall
-            video.url = filed_form.cleaned_data['url']
+            video.url = form.cleaned_data['url']
             parsed_url = urllib.parse.urlparse(video.url)
             video_id = urllib.parse.parse_qs(parsed_url.query).get('v')
             if video_id:
 
-                video.title =
-                video.youtube_id = video_id[0]
 
+                video.youtube_id = video_id[0]
+                response = requests.get(f'https://www.googleapis.com/youtube/v3/videos?part=snippet&id={ video_id[0] }&key={YOUTUBE_API_KEY}')
+                json = response.json()
+                title = json['items'][0]['snippet']['title']
+
+                video.title = title
 
                 video.save()
+                return redirect('detail_hall', pk)
+            else:
+                errors = form._errors.setdefault('url', ErrorList())
+                errors.append('Needs to be a Youtube URL')
+
+
 
 
     return render(request, 'halls/add_video.html', {'form': form, 'search_form': search_form, 'hall': hall})
 
 
-
+def video_search(request):
+    return JsonResponse()
 
 
 

@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="container">
-    <h2>Add Video</h2>
+    <h2>Add Video to {{ hall.title }}</h2>
     <form action="" method="post">
     {% csrf_token %}
       {{ form|crispy }}
@@ -12,8 +12,30 @@
         <br>
     <h2>OR</h2>
         <form action="" method="post">
+            {% csrf_token %}
             {{ search_form|crispy }}
 
         </form>
+    <div id="search_results">
+        <script>
+            var delayTimer;
+            $('#id_search').keyup(function () {
+                clearTimeout(delayTimer);
+                $('#search_results').text('Loading...');
+                delayTimer = setTimeout(function () {
+                  $.ajax({
+                     url: '/video/search',
+                      data: {
+                         'search_term': 'hello'
+                      },
+                      dataType: 'json',
+                      success: function (data) {
+                          $('#search_results').text('AJAX OK');
+                      }
+                  });
+                }, 1000);
+            });
+        </script>
+    </div>
     </div>
 {% endblock %}
